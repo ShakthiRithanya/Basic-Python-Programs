@@ -1,45 +1,54 @@
-#anagram is where both the strings have each characters of the same frequency
-#danger and garden is an example of an anagram
+# anagram is where both the strings have each characters of the same frequency
+# danger and garden is an example of an anagram
 
-def isanagram(s1,s2):
-    if(len(s1)!=len(s2)):
+from collections import Counter
+import string # To handle case sensitivity and punctuation
+
+def is_anagram(s1, s2, case_sensitive=False, ignore_spaces=True):
+    """
+    Checks if two strings are anagrams of each other.
+
+    Args:
+        s1 (str): The first string.
+        s2 (str): The second string.
+        case_sensitive (bool): If True, 'A' and 'a' are different. Default is False.
+        ignore_spaces (bool): If True, spaces and punctuation are ignored. Default is True.
+
+    Returns:
+        bool: True if they are anagrams, False otherwise.
+    """
+    
+    # --- Pre-processing for robust comparison ---
+    
+    if not case_sensitive:
+        s1 = s1.lower()
+        s2 = s2.lower()
+        
+    if ignore_spaces:
+        # Filter out spaces and punctuation for a standard anagram check
+        s1 = ''.join(char for char in s1 if char.isalpha())
+        s2 = ''.join(char for char in s2 if char.isalpha())
+
+    # 1. Length Check (Essential and Fast Pre-check)
+    if len(s1) != len(s2):
         return False
+    
+    # 2. Character Frequency Check using Counter (The most Pythonic way)
+    # Counter(s1) creates a dictionary like {'d': 1, 'a': 1, 'n': 1, ...}
+    return Counter(s1) == Counter(s2)
 
-    # return sorted(s1) == sorted(s2)
-    freq1 = {} #declaring dictionaries for mapping purpose
-    freq2 = {}
+    # Note: Your original logic (using dictionaries) is also correct and works fine!
+    # return sorted(s1) == sorted(s2) # This is O(n log n), but a good alternative
+    
+# --- Main Execution Block ---
 
-    #using dictionary(hash table) for  assigning the character as key and no of times it repeated as values
-    # {
-    #     char1:value1
-    # }
-    for char in s1:
-        if char in freq1:
-            freq1[char] += 1
-        else:
-            freq1[char] = 1
+print("--- Anagram Checker ---")
+# Stripping leading/trailing spaces for cleaner input
+s1 = input("Enter the first word or phrase: ").strip()
+s2 = input("Enter the second word or phrase: ").strip()
 
-    for char in s2:
-        if char in freq2:
-            freq2[char] += 1
-        else:
-            freq2[char] = 1
-
-    # for every key in dictionary freq1 we are comparing it with the key in dictionary freq2
-    # if the key is not found then it will return false 
-    # and simillarly the values from both the dictionaries are being compared 
-    # if any one of the condition is false it will return false "or" is being used 
-    for key in freq1:
-        if key not in freq2 or freq1[key]!=freq2[key]:
-            return False
-    return True
-
-
-
-s1 = input("Enter a string\n")
-s2 = input("Enter second string\n")
-
-if isanagram(s1,s2):
-    print(f"\nThe {s1} and {s2} are Anagrams")
+# We often want to ignore case and spaces for phrase anagrams (e.g., "Madam Curie" vs "Me Cried Au")
+if is_anagram(s1, s2): 
+    print(f"\n✅ '{s1}' and '{s2}' ARE Anagrams!")
 else:
-    print(f"{s1} and {s2} are not anagram")
+    print(f"\n❌ '{s1}' and '{s2}' are NOT Anagrams.")
